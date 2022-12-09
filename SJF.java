@@ -20,7 +20,7 @@ public class SJF {
 
 
         for (int i = 0; i < n; i++) {
-            System.out.println("Please Enter Process " + (i + 1) + " Name");
+            System.out.println("Please Enter Process " + (i + 1) + " Number");
             Processes[i] = sc.nextInt();
             System.out.println("Please Enter Process " + Processes[i] + " Arrival time:");
             arrivalTime[i] = sc.nextInt();
@@ -64,7 +64,7 @@ public class SJF {
 
         for (int i=0 ; i< n;i++)
         {
-            System.out.println("P"+Processes[i] + "\t" +"waiting : "+ WaitingTime[i] + "\t" +"turn around: "+ TurnAroundTime[i] +"\t");
+            System.out.println("P"+Processes[i] + "\t" +"Waiting Time : "+ WaitingTime[i] + "\t" +"Turn Around Time : "+ TurnAroundTime[i] +"\t");
         }
         System.out.println("\n");
         System.out.println("Average waiting time is " + (AvgWaitingTime / n));
