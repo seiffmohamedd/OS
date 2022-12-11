@@ -2,69 +2,122 @@ import java.util.*;
 
 public class SJF {
     public static void main (String args[]) {
+
         Scanner sc = new Scanner(System.in);
+        int n , ContextSwitching;
         System.out.println("Please Enter number of processes: ");
-        int n = sc.nextInt();
-        int Processes[] = new int[n];
-        int arrivalTime[] = new int[n];
-        int BurstTime[] = new int[n];
-        int CompleteTime[] = new int[n];
-        int TurnAroundTime[] = new int[n];
-        int WaitingTime[] = new int[n];
-        Boolean FinishedProcess[] = new Boolean[n];
-        int ArrivalTimeCounter = 0;
-        int  ProcessCompletedCounter = 0;
-        double AvgWaitingTime = 0;
-        double AvgTurnAround = 0;
-        int tmpBurstTime[] = new int[n];
+        n = sc.nextInt();
+        System.out.println("Please Enter Context Switching Time: ");
+        ContextSwitching = sc.nextInt();
+        String Processes[];
+        int ArrivalTime[],BurstTime[],EndBurstTime[],TurnAroundTime[],WaitingTime[];
+         Processes = new String[n];
+         ArrivalTime = new int[n];
+         BurstTime = new int[n];
+         EndBurstTime = new int[n];
+         TurnAroundTime = new int[n];
+         WaitingTime = new int[n];
+         Boolean FinishedProcess[] = new Boolean[n];          //boolean to check if the process is completed or still there burst time
+         int TimeCounter = 0;
+         int  ProcessesCompletedCounter = 0;
+         int minimum=1000;
+
+        String PreviousProcessName=" ";
+         double AvgWaitingTime = 0;
+         double AvgTurnAround = 0;
+         int tmpBurstTime[] = new int[n];
 
 
         for (int i = 0; i < n; i++) {
-            System.out.println("Please Enter Process " + (i + 1) + " Number");
-            Processes[i] = sc.nextInt();
+            System.out.println("Please Enter Process " + (i + 1) + " Name or Number");
+            Processes[i] = sc.next();
             System.out.println("Please Enter Process " + Processes[i] + " Arrival time:");
-            arrivalTime[i] = sc.nextInt();
+            ArrivalTime[i] = sc.nextInt();
             System.out.println("Please Enter Process " +  Processes[i] + " Burst time:");
             BurstTime[i] = sc.nextInt();
+            FinishedProcess[i] = false;         //auto initiate boolean with false
             tmpBurstTime[i] = BurstTime[i];
-            FinishedProcess[i] = false;
-        }
 
-        while (true) {
-            int min = 99, MinIndex = n;
-            if (ProcessCompletedCounter == n)     //All Processes Are Completed
+            if(ArrivalTime[i]<minimum){
+                minimum=ArrivalTime[i];
+                PreviousProcessName=Processes[i];
+            }
+
+        }
+        while (true)
+        {
+            int MinIndex = n;
+            int min = 1000;
+
+            if (ProcessesCompletedCounter == n)     //if All Processes Are Finished(= no of processes) then break
+            {
+
                 break;
+            }
+
 
             for (int i = 0; i < n; i++) {
-                if ((arrivalTime[i] <= ArrivalTimeCounter) && (FinishedProcess[i] == false) && (BurstTime[i] < min)) {
-                    min = BurstTime[i];   //m3ana el min we m3ana el index bta3o
+                if ((ArrivalTime[i] <= TimeCounter) && (FinishedProcess[i] == false) && (BurstTime[i] < min)) {  //loop to get the Process of min burst time with respect to arrival time counter
+                    min = BurstTime[i];   //m3ana el minimum we m3ana el index bta3o
                     MinIndex = i;
+
                 }
             }
+
+
 
             if (MinIndex == n)
-                ArrivalTimeCounter++;     //lw el index == num of process yb2a n++ EL arrival time +1
-            else {
-                BurstTime[MinIndex]--;     // hn minus el bt[min]-1
-                ArrivalTimeCounter++;               //hn ++ el arrival time
-                if (BurstTime[MinIndex] == 0) {
-                    CompleteTime[MinIndex] = ArrivalTimeCounter;
+            {
+                TimeCounter++;            //lw el index == num of process yb2a ++ EL time counter +1 cuz there is no new process entered or even in the queue
+
+            }
+            else
+            {
+                if(PreviousProcessName!=Processes[MinIndex])
+                {
+                    TimeCounter+=ContextSwitching;
+//                System.out.println("----------------");
+//                System.out.println(TimeCounter);
+//                System.out.println("----------------");
+                    System.out.println("P" + PreviousProcessName);
+                    PreviousProcessName=Processes[MinIndex];
+                    if(ProcessesCompletedCounter==n-1)
+                    {
+                        System.out.println("P" + Processes[MinIndex]);
+
+                    }
+                }
+                BurstTime[MinIndex]--;     // hn minus el burst[min]-1
+                TimeCounter++;               //hn ++ el time counter
+
+                if (BurstTime[MinIndex] == 0)
+                {
+                    EndBurstTime[MinIndex] = TimeCounter;    //EndBurstTime is the whole time taken(TimeCounter)to finish the specific (MinIndex) Process
+
+
+//                    System.out.println("--------------");
+//                    System.out.println(EndBurstTime[MinIndex]);
+//                    System.out.println("--------------");
+
                     FinishedProcess[MinIndex] = true;
-                    ProcessCompletedCounter++;
+                    ProcessesCompletedCounter++;
                 }
             }
+
         }
 
-        for (int i = 0; i < n; i++) {
-            TurnAroundTime[i] = CompleteTime[i] - arrivalTime[i];
-            WaitingTime[i] = TurnAroundTime[i] - tmpBurstTime[i];
+        for (int i = 0; i < n; i++)
+        {
+            WaitingTime[i]=EndBurstTime[i]-tmpBurstTime[i]-ArrivalTime[i];
+            TurnAroundTime[i]=WaitingTime[i]+tmpBurstTime[i];
             AvgWaitingTime += WaitingTime[i];
             AvgTurnAround += TurnAroundTime[i];
         }
+            System.out.println('\n');
 
         for (int i=0 ; i< n;i++)
         {
-            System.out.println("P"+Processes[i] + "\t" +"Waiting Time : "+ WaitingTime[i] + "\t" +"Turn Around Time : "+ TurnAroundTime[i] +"\t");
+            System.out.println("P"+Processes[i]+ " " +"Waiting Time : "+ WaitingTime[i] + " " +"Turn Around Time : "+ TurnAroundTime[i]);
         }
         System.out.println("\n");
         System.out.println("Average waiting time is " + (AvgWaitingTime / n));
