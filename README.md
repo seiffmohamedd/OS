@@ -1,5 +1,5 @@
 # OS
-Assignment about CPU Scheduling ---> implementing Pre-emptive Shortest Job First with context Switching
-#####DONE#####
+Assignment about CPU Scheduling 
+Implementing Pre-emptive Shortest Job First with context Switching
 "\n"
 Implementing Pre-emptive Round Robin without Context switching 
